@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:prod": "node src/index.js NODE_ENV=production",
     "dev": "node --watch src/index.js",
     "test": "jest"
   },
@@ -16,7 +17,8 @@
     "cors": "2.8.5",
     "dotenv": "16.5.0",
     "express": "5.1.0",
-    "p-queue": "8.1.0"
+    "p-queue": "8.1.0",
+    "winston": "3.17.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",

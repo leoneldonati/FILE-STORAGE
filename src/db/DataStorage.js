@@ -1,14 +1,18 @@
+import { maxBackups } from "../config.js";
 import FileManager from "./FileManager.js";
 import PQueue from "p-queue";
+import logger from "../logger.js";
 
 export default class DataStorage {
   constructor(config) {
-    const { dbName, backupConfig = { enabled: true, maxBackups: 5 } } = config;
+    const { dbName = "", backupConfig = { enabled: true, maxBackups } } =
+      config;
     const dbPath = `./data/${dbName}.json`;
     this.fileManager = new FileManager(dbPath, backupConfig);
     this.queue = new PQueue({ concurrency: 1 });
     this.cache = null;
     this.isCacheInitialized = false;
+    logger.info(`DataStorage initialized for ${dbName}`);
   }
 
   async initializeCache() {
@@ -62,7 +66,7 @@ export default class DataStorage {
     return this.queue.add(async () => {
       await this.initializeCache();
       const recordIndex = this.cache.findIndex((record) => record._id === id);
-      if (recordIndex === -1) return false;
+      if (recordIndex === -1) throw new Error("El archivo es inexistente");
       this.cache = this.cache.filter((record) => record._id !== id);
       await this.fileManager.writeFile(this.cache);
       return true;

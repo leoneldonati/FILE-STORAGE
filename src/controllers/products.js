@@ -1,5 +1,5 @@
 import DataStorage from "../db/DataStorage.js";
-
+import logger from "../logger.js";
 const dataStorage = new DataStorage({ dbName: "DMSRL" });
 
 async function getProductsByLimit(req, res) {
@@ -65,6 +65,7 @@ async function getProductById(req, res) {
     });
   } catch (e) {
     if (e instanceof Error) {
+      logger.error(e.message);
       const { message } = e;
       res.status(500).json({
         error: true,
@@ -128,5 +129,43 @@ async function updateProduct(req, res) {
     }
   }
 }
+async function deleteProduct(req, res) {
+  const params = req.params;
 
-export { getProductById, getProductsByLimit, setProduct, updateProduct };
+  if (!params || !params?.id) {
+    res.status(400).json({
+      error: true,
+      data: null,
+      message: "Necesitas especificar el id del producto que quieres borrar.",
+    });
+    return;
+  }
+
+  const { id } = params;
+  try {
+    await dataStorage.delete(id);
+
+    res.json({
+      error: false,
+      data: null,
+      message: "¡Archivo borrado!",
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const { message } = e;
+      res.status(500).json({
+        error: true,
+        data: null,
+        message,
+      });
+    }
+  }
+}
+
+export {
+  getProductById,
+  getProductsByLimit,
+  setProduct,
+  updateProduct,
+  deleteProduct,
+};
