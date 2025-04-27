@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { setStorage } from "./middlewares/setStorage.js";
 const app = express();
 
+app.disable("x-powered-by");
 app.use(morgan("dev"));
 
 app.use(setStorage);
