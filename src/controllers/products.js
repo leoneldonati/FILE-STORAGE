@@ -1,9 +1,8 @@
-import DataStorage from "../db/DataStorage.js";
 import logger from "../logger.js";
-const dataStorage = new DataStorage({ dbName: "DMSRL" });
 
 async function getProductsByLimit(req, res) {
   const query = req.query;
+  const dataStorage = req.storage;
   if (!query?.limit) {
     // <-- SI NO EXISTE LIMITE
     res.status(400).json({
@@ -44,6 +43,7 @@ async function getProductsByLimit(req, res) {
 }
 async function getProductById(req, res) {
   const params = req.params;
+  const dataStorage = req.storage;
 
   if (!params?.id) {
     res.status(400).json({
@@ -77,6 +77,7 @@ async function getProductById(req, res) {
 }
 async function setProduct(req, res) {
   const payload = req.body;
+  const dataStorage = req.storage;
 
   try {
     const savedProduct = await dataStorage.save(payload);
@@ -100,6 +101,7 @@ async function setProduct(req, res) {
 async function updateProduct(req, res) {
   const payload = req.body;
   const params = req.params;
+  const dataStorage = req.storage;
 
   if (!params?.id) {
     res.status(400).json({
@@ -131,6 +133,7 @@ async function updateProduct(req, res) {
 }
 async function deleteProduct(req, res) {
   const params = req.params;
+  const dataStorage = req.storage;
 
   if (!params || !params?.id) {
     res.status(400).json({
